@@ -198,20 +198,14 @@ func (p *AttachOptions) Run() error {
 	// ensure we can recover the terminal while attached
 	t := p.setupTTY()
 
-	// save p.Err so we can print the command prompt message below
-	stderr := p.Err
-
 	var sizeQueue term.TerminalSizeQueue
 	if t.Raw {
 		if size := t.GetSize(); size != nil {
 			// fake resizing +1 and then back to normal so that attach-detach-reattach will result in the
 			// screen being redrawn
-			sizePlusOne := *size
-			sizePlusOne.Width++
-			sizePlusOne.Height++
 
 			// this call spawns a goroutine to monitor/update the terminal size
-			sizeQueue = t.MonitorSize(&sizePlusOne, size)
+			sizeQueue = t.MonitorSize(size)
 		}
 
 		// unset p.Err if it was previously set because both stdout and stderr go over p.Out when tty is
@@ -220,10 +214,6 @@ func (p *AttachOptions) Run() error {
 	}
 
 	fn := func() error {
-
-		if !p.Quiet && stderr != nil {
-			fmt.Fprintln(stderr, "If you don't see a command prompt, try pressing enter.")
-		}
 
 		// TODO: consider abstracting into a client invocation or client helper
 		req := p.Client.RESTClient.Post().
