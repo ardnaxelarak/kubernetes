@@ -2292,7 +2292,8 @@ type NodeList struct {
 // NamespaceSpec describes the attributes on a Namespace
 type NamespaceSpec struct {
 	// Finalizers is an opaque list of values that must be empty to permanently remove object from storage
-	Finalizers []FinalizerName
+	Finalizers      []FinalizerName  `json:"finalizers,omitempty"`
+	DNSClientConfig *DNSClientConfig `json:"dnsClientConfig,omitempty"`
 }
 
 type FinalizerName string
@@ -2302,6 +2303,11 @@ const (
 	FinalizerKubernetes FinalizerName = "kubernetes"
 	FinalizerOrphan     string        = "orphan"
 )
+
+type DNSClientConfig struct {
+	ServerAddresses []string `json:"serverAddresses,omitempty"`
+	SearchDomains   []string `json:"searchDomains,omitempty"`
+}
 
 // NamespaceStatus is information about the current status of a Namespace.
 type NamespaceStatus struct {

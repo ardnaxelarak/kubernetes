@@ -61,6 +61,7 @@ func RegisterDeepCopies(scheme *runtime.Scheme) error {
 		conversion.GeneratedDeepCopyFunc{Fn: DeepCopy_v1_ContainerStateTerminated, InType: reflect.TypeOf(&ContainerStateTerminated{})},
 		conversion.GeneratedDeepCopyFunc{Fn: DeepCopy_v1_ContainerStateWaiting, InType: reflect.TypeOf(&ContainerStateWaiting{})},
 		conversion.GeneratedDeepCopyFunc{Fn: DeepCopy_v1_ContainerStatus, InType: reflect.TypeOf(&ContainerStatus{})},
+		conversion.GeneratedDeepCopyFunc{Fn: DeepCopy_v1_DNSClientConfig, InType: reflect.TypeOf(&DNSClientConfig{})},
 		conversion.GeneratedDeepCopyFunc{Fn: DeepCopy_v1_DaemonEndpoint, InType: reflect.TypeOf(&DaemonEndpoint{})},
 		conversion.GeneratedDeepCopyFunc{Fn: DeepCopy_v1_DeleteOptions, InType: reflect.TypeOf(&DeleteOptions{})},
 		conversion.GeneratedDeepCopyFunc{Fn: DeepCopy_v1_DownwardAPIVolumeFile, InType: reflect.TypeOf(&DownwardAPIVolumeFile{})},
@@ -730,6 +731,28 @@ func DeepCopy_v1_ContainerStatus(in interface{}, out interface{}, c *conversion.
 		out.Image = in.Image
 		out.ImageID = in.ImageID
 		out.ContainerID = in.ContainerID
+		return nil
+	}
+}
+
+func DeepCopy_v1_DNSClientConfig(in interface{}, out interface{}, c *conversion.Cloner) error {
+	{
+		in := in.(*DNSClientConfig)
+		out := out.(*DNSClientConfig)
+		if in.ServerAddresses != nil {
+			in, out := &in.ServerAddresses, &out.ServerAddresses
+			*out = make([]string, len(*in))
+			copy(*out, *in)
+		} else {
+			out.ServerAddresses = nil
+		}
+		if in.SearchDomains != nil {
+			in, out := &in.SearchDomains, &out.SearchDomains
+			*out = make([]string, len(*in))
+			copy(*out, *in)
+		} else {
+			out.SearchDomains = nil
+		}
 		return nil
 	}
 }
@@ -1564,6 +1587,15 @@ func DeepCopy_v1_NamespaceSpec(in interface{}, out interface{}, c *conversion.Cl
 			}
 		} else {
 			out.Finalizers = nil
+		}
+		if in.DNSClientConfig != nil {
+			in, out := &in.DNSClientConfig, &out.DNSClientConfig
+			*out = new(DNSClientConfig)
+			if err := DeepCopy_v1_DNSClientConfig(*in, *out, c); err != nil {
+				return err
+			}
+		} else {
+			out.DNSClientConfig = nil
 		}
 		return nil
 	}

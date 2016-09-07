@@ -520,6 +520,12 @@ message ContainerStatus {
   optional string containerID = 8;
 }
 
+message DNSClientConfig {
+  repeated string serverAddresses = 1;
+
+  repeated string searchDomains = 2;
+}
+
 // DaemonEndpoint contains information about a single Daemon endpoint.
 message DaemonEndpoint {
   // Port number of the given endpoint.
@@ -1191,6 +1197,8 @@ message NamespaceSpec {
   // Finalizers is an opaque list of values that must be empty to permanently remove object from storage.
   // More info: http://releases.k8s.io/HEAD/docs/design/namespaces.md#finalizers
   repeated string finalizers = 1;
+
+  optional DNSClientConfig dnsClientConfig = 2;
 }
 
 // NamespaceStatus is information about the current status of a Namespace.

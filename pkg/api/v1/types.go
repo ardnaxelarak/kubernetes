@@ -2698,7 +2698,13 @@ const (
 type NamespaceSpec struct {
 	// Finalizers is an opaque list of values that must be empty to permanently remove object from storage.
 	// More info: http://releases.k8s.io/HEAD/docs/design/namespaces.md#finalizers
-	Finalizers []FinalizerName `json:"finalizers,omitempty" protobuf:"bytes,1,rep,name=finalizers,casttype=FinalizerName"`
+	Finalizers      []FinalizerName  `json:"finalizers,omitempty" protobuf:"bytes,1,rep,name=finalizers,casttype=FinalizerName"`
+	DNSClientConfig *DNSClientConfig `json:"dnsClientConfig,omitempty" protobuf:"bytes,2,opt,name=dnsClientConfig"`
+}
+
+type DNSClientConfig struct {
+	ServerAddresses []string `json:"serverAddresses,omitempty" protobuf:"bytes,1,rep,name=serverAddresses"`
+	SearchDomains   []string `json:"searchDomains,omitempty" protobuf:"bytes,2,rep,name=searchDomains"`
 }
 
 // NamespaceStatus is information about the current status of a Namespace.

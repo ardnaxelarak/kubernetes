@@ -64,6 +64,7 @@ func RegisterDeepCopies(scheme *runtime.Scheme) error {
 		conversion.GeneratedDeepCopyFunc{Fn: DeepCopy_api_ContainerStateWaiting, InType: reflect.TypeOf(&ContainerStateWaiting{})},
 		conversion.GeneratedDeepCopyFunc{Fn: DeepCopy_api_ContainerStatus, InType: reflect.TypeOf(&ContainerStatus{})},
 		conversion.GeneratedDeepCopyFunc{Fn: DeepCopy_api_ConversionError, InType: reflect.TypeOf(&ConversionError{})},
+		conversion.GeneratedDeepCopyFunc{Fn: DeepCopy_api_DNSClientConfig, InType: reflect.TypeOf(&DNSClientConfig{})},
 		conversion.GeneratedDeepCopyFunc{Fn: DeepCopy_api_DaemonEndpoint, InType: reflect.TypeOf(&DaemonEndpoint{})},
 		conversion.GeneratedDeepCopyFunc{Fn: DeepCopy_api_DeleteOptions, InType: reflect.TypeOf(&DeleteOptions{})},
 		conversion.GeneratedDeepCopyFunc{Fn: DeepCopy_api_DownwardAPIVolumeFile, InType: reflect.TypeOf(&DownwardAPIVolumeFile{})},
@@ -758,6 +759,28 @@ func DeepCopy_api_ConversionError(in interface{}, out interface{}, c *conversion
 			out.Out = *newVal.(*interface{})
 		}
 		out.Message = in.Message
+		return nil
+	}
+}
+
+func DeepCopy_api_DNSClientConfig(in interface{}, out interface{}, c *conversion.Cloner) error {
+	{
+		in := in.(*DNSClientConfig)
+		out := out.(*DNSClientConfig)
+		if in.ServerAddresses != nil {
+			in, out := &in.ServerAddresses, &out.ServerAddresses
+			*out = make([]string, len(*in))
+			copy(*out, *in)
+		} else {
+			out.ServerAddresses = nil
+		}
+		if in.SearchDomains != nil {
+			in, out := &in.SearchDomains, &out.SearchDomains
+			*out = make([]string, len(*in))
+			copy(*out, *in)
+		} else {
+			out.SearchDomains = nil
+		}
 		return nil
 	}
 }
@@ -1606,6 +1629,15 @@ func DeepCopy_api_NamespaceSpec(in interface{}, out interface{}, c *conversion.C
 			}
 		} else {
 			out.Finalizers = nil
+		}
+		if in.DNSClientConfig != nil {
+			in, out := &in.DNSClientConfig, &out.DNSClientConfig
+			*out = new(DNSClientConfig)
+			if err := DeepCopy_api_DNSClientConfig(*in, *out, c); err != nil {
+				return err
+			}
+		} else {
+			out.DNSClientConfig = nil
 		}
 		return nil
 	}

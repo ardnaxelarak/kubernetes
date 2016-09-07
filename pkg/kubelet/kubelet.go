@@ -1618,6 +1618,16 @@ func (kl *Kubelet) GetClusterDNS(pod *api.Pod) ([]string, []string, error) {
 		}
 	}
 	useClusterFirstPolicy := pod.Spec.DNSPolicy == api.DNSClusterFirst
+
+	namespace, err := kl.kubeClient.Core().Namespaces().Get(pod.Namespace)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	if useClusterFirstPolicy && namespace.Spec.DNSClientConfig != nil {
+		return namespace.Spec.DNSClientConfig.ServerAddresses, namespace.Spec.DNSClientConfig.SearchDomains, nil
+	}
+
 	if useClusterFirstPolicy && kl.clusterDNS == nil {
 		// clusterDNS is not known.
 		// pod with ClusterDNSFirst Policy cannot be created

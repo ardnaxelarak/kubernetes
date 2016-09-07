@@ -86,6 +86,8 @@ func RegisterConversions(scheme *runtime.Scheme) error {
 		Convert_api_ContainerStateWaiting_To_v1_ContainerStateWaiting,
 		Convert_v1_ContainerStatus_To_api_ContainerStatus,
 		Convert_api_ContainerStatus_To_v1_ContainerStatus,
+		Convert_v1_DNSClientConfig_To_api_DNSClientConfig,
+		Convert_api_DNSClientConfig_To_v1_DNSClientConfig,
 		Convert_v1_DaemonEndpoint_To_api_DaemonEndpoint,
 		Convert_api_DaemonEndpoint_To_v1_DaemonEndpoint,
 		Convert_v1_DeleteOptions_To_api_DeleteOptions,
@@ -1404,6 +1406,26 @@ func autoConvert_api_ContainerStatus_To_v1_ContainerStatus(in *api.ContainerStat
 
 func Convert_api_ContainerStatus_To_v1_ContainerStatus(in *api.ContainerStatus, out *ContainerStatus, s conversion.Scope) error {
 	return autoConvert_api_ContainerStatus_To_v1_ContainerStatus(in, out, s)
+}
+
+func autoConvert_v1_DNSClientConfig_To_api_DNSClientConfig(in *DNSClientConfig, out *api.DNSClientConfig, s conversion.Scope) error {
+	out.ServerAddresses = in.ServerAddresses
+	out.SearchDomains = in.SearchDomains
+	return nil
+}
+
+func Convert_v1_DNSClientConfig_To_api_DNSClientConfig(in *DNSClientConfig, out *api.DNSClientConfig, s conversion.Scope) error {
+	return autoConvert_v1_DNSClientConfig_To_api_DNSClientConfig(in, out, s)
+}
+
+func autoConvert_api_DNSClientConfig_To_v1_DNSClientConfig(in *api.DNSClientConfig, out *DNSClientConfig, s conversion.Scope) error {
+	out.ServerAddresses = in.ServerAddresses
+	out.SearchDomains = in.SearchDomains
+	return nil
+}
+
+func Convert_api_DNSClientConfig_To_v1_DNSClientConfig(in *api.DNSClientConfig, out *DNSClientConfig, s conversion.Scope) error {
+	return autoConvert_api_DNSClientConfig_To_v1_DNSClientConfig(in, out, s)
 }
 
 func autoConvert_v1_DaemonEndpoint_To_api_DaemonEndpoint(in *DaemonEndpoint, out *api.DaemonEndpoint, s conversion.Scope) error {
@@ -3051,6 +3073,15 @@ func autoConvert_v1_NamespaceSpec_To_api_NamespaceSpec(in *NamespaceSpec, out *a
 	} else {
 		out.Finalizers = nil
 	}
+	if in.DNSClientConfig != nil {
+		in, out := &in.DNSClientConfig, &out.DNSClientConfig
+		*out = new(api.DNSClientConfig)
+		if err := Convert_v1_DNSClientConfig_To_api_DNSClientConfig(*in, *out, s); err != nil {
+			return err
+		}
+	} else {
+		out.DNSClientConfig = nil
+	}
 	return nil
 }
 
@@ -3067,6 +3098,15 @@ func autoConvert_api_NamespaceSpec_To_v1_NamespaceSpec(in *api.NamespaceSpec, ou
 		}
 	} else {
 		out.Finalizers = nil
+	}
+	if in.DNSClientConfig != nil {
+		in, out := &in.DNSClientConfig, &out.DNSClientConfig
+		*out = new(DNSClientConfig)
+		if err := Convert_api_DNSClientConfig_To_v1_DNSClientConfig(*in, *out, s); err != nil {
+			return err
+		}
+	} else {
+		out.DNSClientConfig = nil
 	}
 	return nil
 }
