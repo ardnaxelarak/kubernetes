@@ -144,6 +144,10 @@ const (
 
 	// Minimum number of dead containers to keep in a pod
 	minDeadContainerInPod = 1
+
+	// specify namespace-specific DNS server addresses and search domains
+	kubernetesDNSServerAddressAnnotation = "alpha.kubernetes.io/dns-server-addresses"
+	kubernetesDNSSearchDomainAnnotation  = "alpha.kubernetes.io/dns-search-domains"
 )
 
 // SyncHandler is an interface implemented by Kubelet, for testability
@@ -1194,6 +1198,27 @@ func (kl *Kubelet) GetClusterDNS(pod *api.Pod) ([]string, []string, error) {
 		}
 	}
 	useClusterFirstPolicy := pod.Spec.DNSPolicy == api.DNSClusterFirst
+
+	namespace, err := kl.kubeClient.Core().Namespaces().Get(pod.Namespace)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var serverAddresses, searchDomains []string
+
+	for k, v := range namespace.Annotations {
+		if k == kubernetesDNSServerAddressAnnotation {
+			serverAddresses = strings.Split(v, ",")
+		}
+		if k == kubernetesDNSSearchDomainAnnotation {
+			searchDomains = strings.Split(v, ",")
+		}
+	}
+
+	if useClusterFirstPolicy && (len(serverAddresses) > 0 || len(searchDomains) > 0) {
+		return serverAddresses, searchDomains, nil
+	}
+
 	if useClusterFirstPolicy && kl.clusterDNS == nil {
 		// clusterDNS is not known.
 		// pod with ClusterDNSFirst Policy cannot be created
